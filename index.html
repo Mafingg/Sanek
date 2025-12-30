@@ -3,74 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Важный вопрос</title>
+    <title>Вопрос для тебя</title>
     <style>
         body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffeef8;
+            font-family: sans-serif;
+            overflow: hidden; /* Важно: чтобы не появлялась прокрутка */
+        }
+        h1 {
+            color: #d63384;
+            font-size: 24px;
+            text-align: center;
+            padding: 0 20px;
+            pointer-events: none; /* Чтобы текст не мешал кликам */
+        }
+        .btn-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #ffeef8;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden; /* Запрещаем скролл, чтобы страница не дергалась */
-        }
-        .container {
-            text-align: center;
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 300px; /* Фиксируем высоту зоны, где бегает кнопка */
-            padding: 20px;
-        }
-        h1 { color: #d63384; font-size: 22px; margin-bottom: 40px; }
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            position: relative;
-            height: 100px;
         }
         button {
-            padding: 12px 25px;
+            padding: 15px 30px;
             font-size: 18px;
             cursor: pointer;
             border: none;
             border-radius: 50px;
-            touch-action: manipulation; /* Убирает задержку клика на телефонах */
+            transition: all 0.2s ease-out; /* Плавность как в anime.js */
+            touch-action: manipulation;
         }
-        #yesBtn { background-color: #ff4d6d; color: white; z-index: 10; }
-        #noBtn { 
-            background-color: #adb5bd; 
-            color: white; 
-            position: absolute; 
-            transition: 0.1s; /* Плавное перемещение */
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+        }
+        #noBtn {
+            background-color: #adb5bd;
+            color: white;
+            position: fixed; /* Используем fixed для точности координат экрана */
+            left: 55%; /* Начальная позиция справа от кнопки "Да" */
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="mainContainer">
-        <h1>Сходим завтра выпить кофе? ☕</h1>
-        <div class="buttons">
-            <button id="yesBtn">ДА!</button>
-            <button id="noBtn">Нет</button>
-        </div>
+    <h1>Сходим завтра выпить кофе? ☕</h1>
+    
+    <div class="btn-container">
+        <button id="yesBtn">ДА!</button>
+        <button id="noBtn">Нет</button>
     </div>
 
     <script>
-        const noBtn = document.querySelector('#noBtn');
-        const yesBtn = document.querySelector('#yesBtn');
-        const container = document.querySelector('#mainContainer');
+        const noBtn = document.getElementById("noBtn");
+        const yesBtn = document.getElementById("yesBtn");
 
-        function moveButton() {
-            // Вычисляем размеры контейнера, чтобы кнопка не вылетала за его пределы
-            const containerRect = container.getBoundingClientRect();
-            const btnRect = noBtn.getBoundingClientRect();
+        const moveButton = () => {
+            const padding = 50; // Отступ от краев экрана, чтобы не улетала
+            
+            // Получаем доступную ширину и высоту окна
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
 
-            // Рассчитываем случайные координаты внутри контейнера
-            const maxX = containerRect.width - btnRect.width;
-            const maxY = containerRect.height - btnRect.height;
+            // Генерируем координаты так, чтобы кнопка не вылезала за границы экрана
+            // учитывая её собственные размеры и отступ
+            const randomX = Math.floor(Math.random() * (screenWidth - noBtn.offsetWidth - padding * 2)) + padding;
+            const randomY = Math.floor(Math.random() * (screenHeight - noBtn.offsetHeight - padding * 2)) + padding;
 
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+        };
+
+        // События для ПК и мобилок
+        noBtn.addEventListener("mouseover", moveButton);
+        noBtn.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // Запрещает нажатие на телефоне
+            moveButton();
+        });
+        noBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        yesBtn.addEventListener("click", () => {
+            document.body.innerHTML = `
+                <div style="text-align:center;">
+                    <h1 style="font-size: 80px; margin-bottom: 0;">❤️</h1>
+                    <h1 style="color: #d63384;">Я так и знал!<br>Пиши мне в телеграм ;)</h1>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
