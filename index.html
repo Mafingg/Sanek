@@ -17,57 +17,75 @@
             padding: 0;
             height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             background-color: #7088ff;
             font-family: sans-serif;
-            overflow: hidden; /* Важно: чтобы не появлялась прокрутка */
+            overflow: hidden;
         }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px; /* Ограничиваем ширину для красоты */
+        }
+
         h1 {
             color: #ffffff;
-            font-size: 24px;
+            font-size: 28px;
             text-align: center;
-            padding: 0 20px;
-            pointer-events: none; /* Чтобы текст не мешал кликам */
+            margin-bottom: 50px;
+            pointer-events: none;
         }
+
         .btn-container {
             position: relative;
             width: 100%;
-            height: 300px;
+            height: 150px; /* Зона, в которой будут кнопки */
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Выравниваем кнопки по верхней линии */
+            gap: 40px;
         }
+
         button {
-            padding: 15px 30px;
+            padding: 15px 35px;
             font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
             border: none;
             border-radius: 50px;
-            transition: all 0.2s ease-out; /* Плавность как в anime.js */
+            transition: all 0.2s ease-out;
             touch-action: manipulation;
+            min-width: 100px;
         }
+
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            z-index: 1;
         }
+
         #noBtn {
             background-color: #00b33c;
             color: white;
-            position: fixed; /* Используем fixed для точности координат экрана */
-            left: 55%; /* Начальная позиция справа от кнопки "Да" */
+            position: relative; /* В начале стоит в ряд */
+            z-index: 2;
         }
     </style>
 </head>
 <body>
 
-    <h1>Саня ты куришь?</h1>
-    
-    <div class="btn-container">
-        <button id="yesBtn">ДА!</button>
-        <button id="noBtn">Нет</button>
+    <div class="main-wrapper">
+        <h1>Саня, ты куришь?</h1>
+        
+        <div class="btn-container" id="container">
+            <button id="yesBtn">ДА!</button>
+            <button id="noBtn">Нет</button>
+        </div>
     </div>
 
     <script>
@@ -75,14 +93,14 @@
         const yesBtn = document.getElementById("yesBtn");
 
         const moveButton = () => {
-            const padding = 50; // Отступ от краев экрана, чтобы не улетала
+            // Переключаем на fixed только в момент начала игры
+            noBtn.style.position = 'fixed';
             
-            // Получаем доступную ширину и высоту окна
+            const padding = 30; 
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
 
-            // Генерируем координаты так, чтобы кнопка не вылезала за границы экрана
-            // учитывая её собственные размеры и отступ
+            // Вычисляем случайные координаты по всему экрану
             const randomX = Math.floor(Math.random() * (screenWidth - noBtn.offsetWidth - padding * 2)) + padding;
             const randomY = Math.floor(Math.random() * (screenHeight - noBtn.offsetHeight - padding * 2)) + padding;
 
@@ -90,10 +108,10 @@
             noBtn.style.top = `${randomY}px`;
         };
 
-        // События для ПК и мобилок
+        // Обработка наведения и кликов
         noBtn.addEventListener("mouseover", moveButton);
         noBtn.addEventListener("touchstart", (e) => {
-            e.preventDefault(); // Запрещает нажатие на телефоне
+            e.preventDefault();
             moveButton();
         });
         noBtn.addEventListener("click", (e) => {
@@ -103,20 +121,12 @@
 
         yesBtn.addEventListener("click", () => {
             document.body.innerHTML = `
-                <div style="text-align:center;">
-                    <h1 style="font-size: 80px; margin-bottom: 0;">🤭</h1>
-                    <h1 style="color: #ffffff;">Я так и знал!</h1>
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100vw; height: 100vh;">
+                    <h1 style="font-size: 100px; margin: 0;">🤭</h1>
+                    <h1 style="color: #ffffff; font-size: 32px;">Я так и знал!</h1>
                 </div>
             `;
         });
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
