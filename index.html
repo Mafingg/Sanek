@@ -29,7 +29,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 500px; /* Ограничиваем ширину для красоты */
+            max-width: 500px;
         }
 
         h1 {
@@ -43,10 +43,10 @@
         .btn-container {
             position: relative;
             width: 100%;
-            height: 150px; /* Зона, в которой будут кнопки */
+            height: 150px;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Выравниваем кнопки по верхней линии */
+            align-items: flex-start;
             gap: 40px;
         }
 
@@ -72,7 +72,7 @@
         #noBtn {
             background-color: #00b33c;
             color: white;
-            position: relative; /* В начале стоит в ряд */
+            position: relative;
             z-index: 2;
         }
     </style>
@@ -92,15 +92,16 @@
         const noBtn = document.getElementById("noBtn");
         const yesBtn = document.getElementById("yesBtn");
 
+        // ПЕРЕМЕННЫЕ ДЛЯ TELEGRAM (ИЗМЕНИ ИХ)
+        const tgMessage = "(ТЕСТ) Саня, я признаюсь... Я курю! 🚬😭"; 
+        const tgUsername = "YourPlyashka"; // Твой ник в ТГ без @
+
         const moveButton = () => {
-            // Переключаем на fixed только в момент начала игры
             noBtn.style.position = 'fixed';
-            
             const padding = 30; 
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
 
-            // Вычисляем случайные координаты по всему экрану
             const randomX = Math.floor(Math.random() * (screenWidth - noBtn.offsetWidth - padding * 2)) + padding;
             const randomY = Math.floor(Math.random() * (screenHeight - noBtn.offsetHeight - padding * 2)) + padding;
 
@@ -108,7 +109,6 @@
             noBtn.style.top = `${randomY}px`;
         };
 
-        // Обработка наведения и кликов
         noBtn.addEventListener("mouseover", moveButton);
         noBtn.addEventListener("touchstart", (e) => {
             e.preventDefault();
@@ -119,13 +119,22 @@
             moveButton();
         });
 
+        // ЛОГИКА ПЕРЕХОДА
         yesBtn.addEventListener("click", () => {
+            const encodedMessage = encodeURIComponent(tgMessage);
+
+            // Меняем экран на прощальный
             document.body.innerHTML = `
-                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100vw; height: 100vh;">
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100vw; height: 100vh; text-align: center;">
                     <h1 style="font-size: 100px; margin: 0;">🤭</h1>
-                    <h1 style="color: #ffffff; font-size: 32px;">Я так и знал!</h1>
+                    <h1 style="color: #ffffff; font-size: 32px;">Я так и знал!<br>Переходим в чат...</h1>
                 </div>
             `;
+
+            // Через 1.5 секунды перенаправляем в Telegram
+            setTimeout(() => {
+                window.location.href = `https://t.me/${tgUsername}?text=${encodedMessage}`;
+            }, 1500);
         });
     </script>
 </body>
