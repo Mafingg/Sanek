@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
             background-color: #7088ff;
-            font-family: sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow: hidden;
         }
 
@@ -29,7 +29,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 500px;
+            z-index: 10;
         }
 
         h1 {
@@ -38,16 +38,17 @@
             text-align: center;
             margin-bottom: 50px;
             pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .btn-container {
             position: relative;
             width: 100%;
-            height: 150px;
+            height: 120px;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            gap: 40px;
+            align-items: center;
+            gap: 20px;
         }
 
         button {
@@ -57,32 +58,42 @@
             cursor: pointer;
             border: none;
             border-radius: 50px;
-            transition: all 0.2s ease-out;
+            transition: transform 0.1s active, box-shadow 0.2s;
             touch-action: manipulation;
-            min-width: 100px;
+            min-width: 110px;
         }
 
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
-            z-index: 1;
         }
 
         #noBtn {
             background-color: #00b33c;
             color: white;
             position: relative;
-            z-index: 2;
+            z-index: 100;
+        }
+
+        .final-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-wrapper">
+    <div class="main-wrapper" id="content">
         <h1>Саня, ты куришь?</h1>
-        
-        <div class="btn-container" id="container">
+        <div class="btn-container">
             <button id="yesBtn">ДА!</button>
             <button id="noBtn">Нет</button>
         </div>
@@ -92,13 +103,14 @@
         const noBtn = document.getElementById("noBtn");
         const yesBtn = document.getElementById("yesBtn");
 
-        // ПЕРЕМЕННЫЕ ДЛЯ TELEGRAM (ИЗМЕНИ ИХ)
-        const tgMessage = "(ТЕСТ) Саня, я признаюсь... Я курю! 🚬😭"; 
+        // --- НАСТРОЙКИ ---
+        const tgMessage = "Саня, я признаюсь... Я курю! 🚬😭"; 
         const tgUsername = "YourPlyashka"; // Твой ник в ТГ без @
+        // -----------------
 
         const moveButton = () => {
             noBtn.style.position = 'fixed';
-            const padding = 30; 
+            const padding = 40; 
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
 
@@ -114,27 +126,27 @@
             e.preventDefault();
             moveButton();
         });
-        noBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            moveButton();
-        });
 
-        // ЛОГИКА ПЕРЕХОДА
         yesBtn.addEventListener("click", () => {
             const encodedMessage = encodeURIComponent(tgMessage);
+            const tgLink = `https://t.me/${tgUsername}?text=${encodedMessage}`;
 
-            // Меняем экран на прощальный
+            // Показываем финальный экран
             document.body.innerHTML = `
-                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100vw; height: 100vh; text-align: center;">
-                    <h1 style="font-size: 100px; margin: 0;">🤭</h1>
-                    <h1 style="color: #ffffff; font-size: 32px;">Я так и знал!<br>Переходим в чат...</h1>
+                <div class="final-screen">
+                    <h1 style="font-size: 80px; margin: 0;">🤭</h1>
+                    <h1 style="color: #ffffff; font-size: 28px;">Я так и знал!<br>Переходим в чат...</h1>
+                    <a href="${tgLink}" id="manualLink" style="color: white; text-decoration: underline; margin-top: 20px; font-size: 18px; opacity: 0.8;">Нажми сюда, если не перекинуло</a>
                 </div>
             `;
 
-            // Через 1.5 секунды перенаправляем в Telegram
+            // Попытка автоматического перехода
+            window.location.href = tgLink;
+
+            // Запасной вариант для некоторых браузеров
             setTimeout(() => {
-                window.location.href = `https://t.me/${tgUsername}?text=${encodedMessage}`;
-            }, 1500);
+                window.open(tgLink, '_blank');
+            }, 500);
         });
     </script>
 </body>
